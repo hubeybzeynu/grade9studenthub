@@ -199,12 +199,12 @@ const ReportCardPage = () => {
     : `Promoted to ${reportCard?.promoted_to ? reportCard.promoted_to.replace(/^grade\s*/i, 'Grade ') : `Grade ${gradeNum + 1}`}`;
 
   return (
-    <div className="pt-24 pb-12 px-4 min-h-screen">
+    <div className="pt-16 pb-20 px-4 min-h-screen">
       <div className="max-w-5xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold gradient-text mb-2">📋 Report Card</h1>
-          <p className="text-muted-foreground">View your student report card</p>
-        </motion.div>
+        <div className="py-4 mb-2">
+          <h1 className="text-xl font-bold text-foreground">Report Card</h1>
+          <p className="text-muted-foreground text-xs mt-0.5">View your student report card</p>
+        </div>
 
         {/* Search */}
         {!reportCard && (

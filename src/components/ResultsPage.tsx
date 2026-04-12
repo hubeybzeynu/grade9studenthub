@@ -196,25 +196,18 @@ const ResultsPage = () => {
         initial="hidden"
         animate="visible"
         variants={containerVariants}
-        className="min-h-screen pt-28 pb-12 px-4"
+        className="min-h-screen pt-16 pb-20 px-4"
       >
         <div className="max-w-2xl mx-auto">
-          <motion.div variants={itemVariants} className="text-center mb-10">
-            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center mx-auto mb-6">
-              <Award className="w-10 h-10 text-white" />
-            </div>
-            <h1 className="text-4xl font-bold mb-4">
-              <span className="gradient-text">Ministry</span> Results 2017
-            </h1>
-            <p className="text-muted-foreground">
-              Enter your student ID to view your exam results
-            </p>
-          </motion.div>
+          <div className="py-4 mb-2">
+            <h1 className="text-xl font-bold text-foreground">Ministry Results</h1>
+            <p className="text-muted-foreground text-xs mt-0.5">Enter your student ID to view results</p>
+          </div>
 
           {/* Search Box */}
           <motion.div
             variants={itemVariants}
-            className="glass-card p-8 mb-6"
+            className="bg-card rounded-2xl p-5 mb-4 border border-border shadow-sm"
           >
             <div className="relative mb-4">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
