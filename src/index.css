@@ -98,6 +98,10 @@
   50% { transform: translateY(-20px); }
 }
 
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
 /* Print styles */
 @media print {
   .no-print { display: none !important; }
