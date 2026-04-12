@@ -11,7 +11,6 @@ const mainTabs = [
   { key: 'home', label: 'Home', icon: Home },
   { key: 'textbooks', label: 'Books', icon: BookOpen },
   { key: 'students', label: 'Students', icon: Users },
-  { key: 'results', label: 'Results', icon: Award },
   { key: 'more', label: 'More', icon: MoreHorizontal },
 ];
 
@@ -19,6 +18,7 @@ const moreItems = [
   { key: 'mid', label: 'Mid Exam', icon: ClipboardList },
   { key: 'final', label: 'Final Exam', icon: FileCheck },
   { key: 'report', label: 'Report Card', icon: FileText },
+  { key: 'results', label: 'Ministry Results', icon: Award },
 ];
 
 const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
@@ -37,13 +37,9 @@ const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
   return (
     <>
       {/* Top App Bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 h-14 flex items-center px-4 bg-card/95 backdrop-blur-sm border-b border-border">
+      <div className="fixed top-0 left-0 right-0 z-50 h-14 flex items-center px-4 bg-card border-b border-border">
         <div className="flex items-center gap-3">
-          <img
-            src="/logo.jpg"
-            alt="Logo"
-            className="w-8 h-8 rounded-full"
-          />
+          <img src="/logo.jpg" alt="Logo" className="w-8 h-8 rounded-full" />
           <span className="text-base font-semibold text-foreground">Grade 9 Portal</span>
         </div>
       </div>
@@ -78,7 +74,7 @@ const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
                 currentPage === item.key
                   ? 'bg-primary/15 text-primary'
-                  : 'text-foreground hover:bg-muted'
+                  : 'text-foreground active:bg-muted'
               }`}
             >
               <item.icon className="w-5 h-5" />
@@ -89,7 +85,7 @@ const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
       )}
 
       {/* Bottom Navigation Bar */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-sm border-t border-border safe-area-bottom">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border safe-area-bottom">
         <div className="flex items-stretch justify-around h-16 max-w-lg mx-auto">
           {mainTabs.map((tab) => {
             const isActive = tab.key === 'more' ? isMoreActive || showMore : currentPage === tab.key;

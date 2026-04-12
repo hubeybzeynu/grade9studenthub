@@ -245,22 +245,15 @@ const ExamResultPage = ({ type }: ExamResultPageProps) => {
         initial="hidden"
         animate="visible"
         variants={containerVariants}
-        className="min-h-screen pt-28 pb-12 px-4"
+        className="min-h-screen pt-16 pb-20 px-4"
       >
         <div className="max-w-2xl mx-auto">
-          <motion.div variants={itemVariants} className="text-center mb-10">
-            <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center mx-auto mb-6`}>
-              <Icon className="w-10 h-10 text-white" />
-            </div>
-            <h1 className="text-4xl font-bold mb-4">
-              <span className="gradient-text">{title}</span> Results
-            </h1>
-            <p className="text-muted-foreground">
-              Enter your student ID to view your {title.toLowerCase()} results
-            </p>
-          </motion.div>
+          <div className="py-4 mb-2">
+            <h1 className="text-xl font-bold text-foreground">{title} Results</h1>
+            <p className="text-muted-foreground text-xs mt-0.5">Enter your student number to view results</p>
+          </div>
 
-          <motion.div variants={itemVariants} className="glass-card p-8 mb-6">
+          <motion.div variants={itemVariants} className="bg-card rounded-2xl p-5 mb-4 border border-border shadow-sm">
             {loading ? (
               <div className="text-center py-8">
                 <motion.div
