@@ -1,59 +1,129 @@
-import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Home, BookOpen, Users, Award, ClipboardList, FileCheck, FileText } from 'lucide-react';
+import { Home, BookOpen, Users, Award, MoreHorizontal, ClipboardList, FileCheck, FileText } from 'lucide-react';
+import { useState } from 'react';
 
 interface NavbarProps {
   currentPage: string;
   onNavigate: (page: string) => void;
 }
 
-const navItems = [
+const mainTabs = [
   { key: 'home', label: 'Home', icon: Home },
-  { key: 'textbooks', label: 'Textbooks', icon: BookOpen },
+  { key: 'textbooks', label: 'Books', icon: BookOpen },
   { key: 'students', label: 'Students', icon: Users },
   { key: 'results', label: 'Results', icon: Award },
+  { key: 'more', label: 'More', icon: MoreHorizontal },
+];
+
+const moreItems = [
   { key: 'mid', label: 'Mid Exam', icon: ClipboardList },
   { key: 'final', label: 'Final Exam', icon: FileCheck },
   { key: 'report', label: 'Report Card', icon: FileText },
 ];
 
 const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
-  return (
-    <motion.nav
-      initial={{ y: -20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      className="fixed top-0 left-0 right-0 z-50 glass-card rounded-none border-t-0 border-x-0"
-    >
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center h-16 gap-1 overflow-x-auto scrollbar-hide">
-          <div className="flex items-center gap-2 mr-4 shrink-0">
-            <img
-              src="https://i.postimg.cc/sfKMzbMn/photo-2025-06-12-19-39-13.jpg"
-              alt="Logo"
-              className="w-8 h-8 rounded-full"
-            />
-            <span className="text-sm font-bold gradient-text hidden sm:inline">Grade 9 STS Portal</span>
-          </div>
+  const [showMore, setShowMore] = useState(false);
+  const isMoreActive = moreItems.some(item => item.key === currentPage);
 
-          {navItems.map((item) => (
-            <motion.button
-              key={item.key}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => onNavigate(item.key)}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all shrink-0 ${
-                currentPage === item.key
-                  ? 'bg-primary text-primary-foreground'
-                  : 'hover:bg-white/10 text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              <item.icon className="w-4 h-4" />
-              <span className="hidden md:inline">{item.label}</span>
-            </motion.button>
-          ))}
+  const handleTabClick = (key: string) => {
+    if (key === 'more') {
+      setShowMore(!showMore);
+    } else {
+      setShowMore(false);
+      onNavigate(key);
+    }
+  };
+
+  return (
+    <>
+      {/* Top App Bar */}
+      <div className="fixed top-0 left-0 right-0 z-50 h-14 flex items-center px-4 bg-card/95 backdrop-blur-sm border-b border-border">
+        <div className="flex items-center gap-3">
+          <img
+            src="/logo.jpg"
+            alt="Logo"
+            className="w-8 h-8 rounded-full"
+          />
+          <span className="text-base font-semibold text-foreground">Grade 9 Portal</span>
         </div>
       </div>
-    </motion.nav>
+
+      {/* More Menu Overlay */}
+      {showMore && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-40 bg-background/60 backdrop-blur-sm"
+          onClick={() => setShowMore(false)}
+        />
+      )}
+
+      {/* More Menu Sheet */}
+      {showMore && (
+        <motion.div
+          initial={{ y: 100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 100, opacity: 0 }}
+          transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+          className="fixed bottom-16 left-0 right-0 z-50 bg-card border-t border-border rounded-t-2xl p-2 shadow-xl"
+        >
+          {moreItems.map((item) => (
+            <button
+              key={item.key}
+              onClick={() => {
+                setShowMore(false);
+                onNavigate(item.key);
+              }}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
+                currentPage === item.key
+                  ? 'bg-primary/15 text-primary'
+                  : 'text-foreground hover:bg-muted'
+              }`}
+            >
+              <item.icon className="w-5 h-5" />
+              {item.label}
+            </button>
+          ))}
+        </motion.div>
+      )}
+
+      {/* Bottom Navigation Bar */}
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-sm border-t border-border safe-area-bottom">
+        <div className="flex items-stretch justify-around h-16 max-w-lg mx-auto">
+          {mainTabs.map((tab) => {
+            const isActive = tab.key === 'more' ? isMoreActive || showMore : currentPage === tab.key;
+            return (
+              <button
+                key={tab.key}
+                onClick={() => handleTabClick(tab.key)}
+                className="flex flex-col items-center justify-center flex-1 relative py-1 transition-colors"
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="bottomNavIndicator"
+                    className="absolute top-1 w-8 h-[3px] rounded-full bg-primary"
+                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <tab.icon
+                  className={`w-5 h-5 mb-0.5 transition-colors ${
+                    isActive ? 'text-primary' : 'text-muted-foreground'
+                  }`}
+                />
+                <span
+                  className={`text-[10px] font-medium transition-colors ${
+                    isActive ? 'text-primary' : 'text-muted-foreground'
+                  }`}
+                >
+                  {tab.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </nav>
+    </>
   );
 };
 
