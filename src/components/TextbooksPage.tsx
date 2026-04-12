@@ -8,15 +8,15 @@ const TextbooksPage = () => {
 
   const textbooks = [
     { subject: 'Amharic', previewId: '12O7G_mzRs1sdQVXXpbrvi-smWTweU9gP', localPdf: '/textbooks/amharic_grade_9.pdf' },
-    { subject: 'English', previewId: '15CEwoZFm6jYipL5sCJxDrWCQ8pPk0feQ' },
+    { subject: 'English', previewId: '15CEwoZFm6jYipL5sCJxDrWCQ8pPk0feQ', localPdf: '/textbooks/english_grade_9.pdf' },
     { subject: 'Mathematics', previewId: '1n3laBT5EZwV3HeXrP7CTg-5o5NxORBQT', localPdf: '/textbooks/mathematics_grade_9.pdf' },
-    { subject: 'Physics', previewId: '1nup-odQkaCPLQwenfU8XMbnvCnGq9WZk' },
+    { subject: 'Physics', previewId: '1nup-odQkaCPLQwenfU8XMbnvCnGq9WZk', localPdf: '/textbooks/physics_grade_9.pdf' },
     { subject: 'Chemistry', previewId: '1dXo2tcKMotSH7msnSjqimPz0GWsr-VH_', localPdf: '/textbooks/chemistry_grade_9.pdf' },
     { subject: 'Biology', previewId: '1z8T2F1seLWEUlL9gVH-VnzFPtwq6B8o7', localPdf: '/textbooks/biology_grade_9.pdf' },
-    { subject: 'Citizenship', previewId: '1WqdnnoIapJkHyv-ZxM_OYZNK2cWz6N3K' },
-    { subject: 'ICT', previewId: '1lLfW_hoRu84kgY_m_SljLPJ_V5hDCRkM' },
-    { subject: 'Geography', previewId: '1uBjCz1yesrWG1PTfMk2T-__4KhRUpylH' },
-    { subject: 'History', previewId: '1qtrNYeSU_0ZURVx4Fb4GMda2ENgoVPAY' },
+    { subject: 'Citizenship', previewId: '1WqdnnoIapJkHyv-ZxM_OYZNK2cWz6N3K', localPdf: '/textbooks/citizenship_grade_9.pdf' },
+    { subject: 'ICT', previewId: '1lLfW_hoRu84kgY_m_SljLPJ_V5hDCRkM', localPdf: '/textbooks/ict_grade_9.pdf' },
+    { subject: 'Geography', previewId: '1uBjCz1yesrWG1PTfMk2T-__4KhRUpylH', localPdf: '/textbooks/geography_grade_9.pdf' },
+    { subject: 'History', previewId: '1qtrNYeSU_0ZURVx4Fb4GMda2ENgoVPAY', localPdf: '/textbooks/history_grade_9.pdf' },
     { subject: 'Economics', previewId: '1A_lpLOxw1BQMiAnTatBvAHLeYlOtLoU8', localPdf: '/textbooks/economics_grade_9.pdf' },
     { subject: 'HPE', previewId: '1fUg9sJlJyuWQxiBpT4oGwh9A8v0irdsS', localPdf: '/textbooks/hpe_grade_9.pdf' },
   ];
@@ -50,19 +50,11 @@ const TextbooksPage = () => {
   };
 
   const openLocalPdf = (book: typeof textbooks[0]) => {
-    if (book.localPdf) {
-      setOpenBook({ url: book.localPdf, title: book.subject, isLocal: true });
-    } else {
-      setOpenBook({
-        url: `https://drive.google.com/file/d/${book.previewId}/preview`,
-        title: book.subject,
-      });
-    }
+    setOpenBook({ url: book.localPdf, title: book.subject, isLocal: true });
   };
 
   const getDownloadUrl = (book: typeof textbooks[0]) => {
-    if (book.localPdf) return book.localPdf;
-    return `https://drive.google.com/uc?export=download&id=${book.previewId}`;
+    return book.localPdf;
   };
 
   return (
@@ -102,12 +94,9 @@ const TextbooksPage = () => {
                 <p className="text-muted-foreground text-sm mb-1">
                   Grade 9 {book.subject} Textbook
                 </p>
-                {book.localPdf && (
-                  <span className="inline-block text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full mb-3">
-                    📖 PDF Available + AI Tutor
-                  </span>
-                )}
-                {!book.localPdf && <div className="mb-3" />}
+                <span className="inline-block text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full mb-3">
+                  📖 Available Offline
+                </span>
 
                 <div className="flex gap-2">
                   <motion.button
@@ -122,7 +111,7 @@ const TextbooksPage = () => {
                   
                   <motion.a
                     href={getDownloadUrl(book)}
-                    download={book.localPdf ? `${book.subject}_Grade9.pdf` : undefined}
+                    download={`${book.subject}_Grade9.pdf`}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="btn-ghost flex items-center justify-center gap-2 text-sm py-2 px-4"
@@ -161,21 +150,12 @@ const TextbooksPage = () => {
                 </motion.button>
               </div>
               <div className="flex-1 p-4">
-                {openBook.isLocal ? (
-                  <iframe
-                    src={openBook.url}
-                    className="w-full h-full rounded-xl border-0"
-                    style={{ boxShadow: '0 0 30px rgba(0,0,0,0.3)' }}
-                    title={`${openBook.title} PDF`}
-                  />
-                ) : (
-                  <iframe
-                    src={openBook.url}
-                    className="w-full h-full rounded-xl border-0"
-                    style={{ boxShadow: '0 0 30px rgba(0,0,0,0.3)' }}
-                    allow="autoplay"
-                  />
-                )}
+                <iframe
+                  src={openBook.url}
+                  className="w-full h-full rounded-xl border-0"
+                  style={{ boxShadow: '0 0 30px rgba(0,0,0,0.3)' }}
+                  title={`${openBook.title} PDF`}
+                />
               </div>
             </div>
 
