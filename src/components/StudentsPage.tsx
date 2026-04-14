@@ -39,7 +39,17 @@ const StudentsPage = ({ onNavigate }: StudentsPageProps) => {
         <div className="max-w-lg mx-auto">
           <div className="py-4 mb-1">
             <h1 className="text-xl font-bold text-foreground">Students</h1>
-            <p className="text-muted-foreground text-xs mt-0.5">{allStudents.length} students</p>
+            <div className="flex items-center gap-3 mt-1">
+              <span className="text-muted-foreground text-xs">
+                Total: <span className="font-semibold text-foreground">{filteredStudents.length}</span>
+              </span>
+              <span className="text-xs text-blue-400">
+                ♂ {filteredStudents.filter(s => s.gender === 'Male').length}
+              </span>
+              <span className="text-xs text-pink-400">
+                ♀ {filteredStudents.filter(s => s.gender === 'Female').length}
+              </span>
+            </div>
           </div>
 
           {/* Search */}

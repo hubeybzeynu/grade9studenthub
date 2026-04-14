@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Home, BookOpen, Users, Award, MoreHorizontal, ClipboardList, FileCheck, FileText } from 'lucide-react';
+import { Home, BookOpen, Users, Award, MoreHorizontal, ClipboardList, FileCheck, FileText, Info } from 'lucide-react';
 import { useState } from 'react';
 
 interface NavbarProps {
@@ -37,11 +37,19 @@ const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
   return (
     <>
       {/* Top App Bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 h-14 flex items-center px-4 bg-card border-b border-border">
+      <div className="fixed top-0 left-0 right-0 z-50 h-14 flex items-center justify-between px-4 bg-card border-b border-border">
         <div className="flex items-center gap-3">
           <img src="/logo.jpg" alt="Logo" className="w-8 h-8 rounded-full" />
           <span className="text-base font-semibold text-foreground">Grade 9 Portal</span>
         </div>
+        <button
+          onClick={() => onNavigate('info')}
+          className={`p-2 rounded-full transition-colors ${
+            currentPage === 'info' ? 'bg-primary/15 text-primary' : 'text-muted-foreground active:bg-muted'
+          }`}
+        >
+          <Info className="w-5 h-5" />
+        </button>
       </div>
 
       {/* More Menu Overlay */}
