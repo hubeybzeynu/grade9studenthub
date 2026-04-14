@@ -1,22 +1,51 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
+import { textbookPageInfo } from '@/data/textbookContent';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 interface PdfViewerProps {
   url: string;
   initialPage?: number;
+  subject?: string;
 }
 
-const PdfViewer = ({ url, initialPage = 1 }: PdfViewerProps) => {
+// Convert number to Roman numerals
+const toRoman = (num: number): string => {
+  const vals = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1];
+  const syms = ['M', 'CM', 'D', 'CD', 'C', 'XC', 'L', 'XL', 'X', 'IX', 'V', 'IV', 'I'];
+  let result = '';
+  for (let i = 0; i < vals.length; i++) {
+    while (num >= vals[i]) {
+      result += syms[i];
+      num -= vals[i];
+    }
+  }
+  return result.toLowerCase();
+};
+
+const PdfViewer = ({ url, initialPage = 1, subject }: PdfViewerProps) => {
   const [numPages, setNumPages] = useState<number>(0);
   const [pageNumber, setPageNumber] = useState(initialPage);
   const [scale, setScale] = useState(1.0);
   const [containerWidth, setContainerWidth] = useState(400);
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+
+  // Get front matter offset for this subject
+  const frontMatter = subject ? (textbookPageInfo[subject]?.frontMatter || 0) : 0;
+
+  // Get display page label (Roman for front matter, number for content)
+  const getPageLabel = (pdfPage: number): string => {
+    if (pdfPage <= frontMatter) {
+      return toRoman(pdfPage);
+    }
+    return String(pdfPage - frontMatter);
+  };
 
   const onDocumentLoadSuccess = useCallback(({ numPages }: { numPages: number }) => {
     setNumPages(numPages);
@@ -37,6 +66,30 @@ const PdfViewer = ({ url, initialPage = 1 }: PdfViewerProps) => {
     if (page >= 1 && page <= numPages) setPageNumber(page);
   };
 
+  // Swipe handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (scale > 1) return; // Don't swipe when zoomed
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null || touchStartY.current === null || scale > 1) return;
+    const deltaX = e.changedTouches[0].clientX - touchStartX.current;
+    const deltaY = e.changedTouches[0].clientY - touchStartY.current;
+    
+    // Only swipe if horizontal movement is dominant and significant
+    if (Math.abs(deltaX) > 60 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
+      if (deltaX < 0) {
+        goToPage(pageNumber + 1); // Swipe left = next page
+      } else {
+        goToPage(pageNumber - 1); // Swipe right = prev page
+      }
+    }
+    touchStartX.current = null;
+    touchStartY.current = null;
+  };
+
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Controls bar */}
@@ -50,18 +103,10 @@ const PdfViewer = ({ url, initialPage = 1 }: PdfViewerProps) => {
             <ChevronLeft className="w-4 h-4" />
           </button>
           <div className="flex items-center gap-1 px-2">
-            <input
-              type="number"
-              value={pageNumber}
-              onChange={(e) => {
-                const val = parseInt(e.target.value);
-                if (!isNaN(val)) goToPage(val);
-              }}
-              className="w-12 text-center text-sm bg-muted rounded-lg py-1 border-none focus:outline-none focus:ring-1 focus:ring-primary"
-              min={1}
-              max={numPages}
-            />
-            <span className="text-xs text-muted-foreground">/ {numPages}</span>
+            <span className="text-sm font-medium min-w-[2rem] text-center">
+              {getPageLabel(pageNumber)}
+            </span>
+            <span className="text-xs text-muted-foreground">/ {numPages - frontMatter}</span>
           </div>
           <button
             onClick={() => goToPage(pageNumber + 1)}
@@ -95,11 +140,13 @@ const PdfViewer = ({ url, initialPage = 1 }: PdfViewerProps) => {
         </div>
       </div>
 
-      {/* PDF content */}
+      {/* PDF content with swipe support */}
       <div
         ref={containerRef}
         className="flex-1 overflow-auto flex justify-center"
-        style={{ touchAction: 'pan-x pan-y' }}
+        style={{ touchAction: scale > 1 ? 'pan-x pan-y' : 'pan-y' }}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
       >
         <Document
           file={url}

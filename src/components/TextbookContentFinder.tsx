@@ -29,6 +29,13 @@ const TextbookContentFinder = ({ subject, onGoToPage }: TextbookContentFinderPro
     });
   }, [items, activeFilter, query]);
 
+  const counts = useMemo(() => ({
+    all: items.length,
+    exercise: items.filter(i => i.type === 'exercise').length,
+    activity: items.filter(i => i.type === 'activity').length,
+    review: items.filter(i => i.type === 'review').length,
+  }), [items]);
+
   const handleSelect = (item: ContentItem) => {
     onGoToPage(item.page);
     setIsOpen(false);
@@ -72,7 +79,7 @@ const TextbookContentFinder = ({ subject, onGoToPage }: TextbookContentFinderPro
               <div className="flex items-center justify-between px-4 pb-2">
                 <h3 className="font-semibold text-sm flex items-center gap-2">
                   <BookOpen className="w-4 h-4 text-primary" />
-                  {subject} Content
+                  {subject} Content ({items.length} items)
                 </h3>
                 <button onClick={() => setIsOpen(false)} className="p-1.5 rounded-lg active:bg-muted">
                   <X className="w-4 h-4" />
@@ -83,29 +90,30 @@ const TextbookContentFinder = ({ subject, onGoToPage }: TextbookContentFinderPro
               <div className="px-4 pb-2">
                 <input
                   type="text"
-                  placeholder="Search content..."
+                  placeholder="Search exercises, activities, reviews..."
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   className="w-full px-3 py-2 rounded-xl bg-muted border-none text-sm focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </div>
 
-              {/* Filter chips */}
-              <div className="flex gap-2 px-4 pb-3">
+              {/* Filter chips with counts */}
+              <div className="flex gap-2 px-4 pb-3 overflow-x-auto">
                 {(['all', 'exercise', 'activity', 'review'] as const).map((type) => {
                   const isActive = activeFilter === type;
                   const config = type !== 'all' ? typeConfig[type] : null;
+                  const count = counts[type];
                   return (
                     <button
                       key={type}
                       onClick={() => setActiveFilter(type)}
-                      className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                      className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors whitespace-nowrap ${
                         isActive
                           ? 'bg-primary text-primary-foreground'
                           : 'bg-muted text-muted-foreground'
                       }`}
                     >
-                      {type === 'all' ? 'All' : config?.label}
+                      {type === 'all' ? `All (${count})` : `${config?.label} (${count})`}
                     </button>
                   );
                 })}
@@ -122,10 +130,10 @@ const TextbookContentFinder = ({ subject, onGoToPage }: TextbookContentFinderPro
                       const Icon = config.icon;
                       return (
                         <motion.button
-                          key={i}
+                          key={`${item.page}-${item.type}-${i}`}
                           initial={{ opacity: 0, y: 8 }}
                           animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: i * 0.03 }}
+                          transition={{ delay: Math.min(i * 0.02, 0.5) }}
                           onClick={() => handleSelect(item)}
                           className="w-full flex items-center gap-3 p-3 rounded-xl bg-muted/50 active:bg-muted text-left transition-colors"
                         >
@@ -134,7 +142,7 @@ const TextbookContentFinder = ({ subject, onGoToPage }: TextbookContentFinderPro
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium truncate">{item.title}</p>
-                            <p className="text-xs text-muted-foreground">Page {item.page}</p>
+                            <p className="text-xs text-muted-foreground">PDF Page {item.page}</p>
                           </div>
                           <span className="text-xs text-primary font-mono shrink-0">p.{item.page}</span>
                         </motion.button>

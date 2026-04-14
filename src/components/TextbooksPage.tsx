@@ -119,7 +119,7 @@ const TextbooksPage = () => {
 
             {/* PDF Viewer */}
             <div className="flex-1 overflow-hidden">
-              <PdfViewer url={openBook.url} initialPage={targetPage} />
+              <PdfViewer url={openBook.url} initialPage={targetPage} subject={openBook.subject} />
             </div>
 
             {/* Content Finder FAB */}
